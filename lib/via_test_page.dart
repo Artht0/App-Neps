@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'strengths.dart'; // define a classe Strength e allStrengths
-import 'constants.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'strengths.dart'; // lista allStrengths
+import 'constants.dart'; // define PrefKeys
 
 class ViaTestPage extends StatefulWidget {
   const ViaTestPage({super.key});
@@ -12,23 +14,11 @@ class ViaTestPage extends StatefulWidget {
 
 class _ViaTestPageState extends State<ViaTestPage> {
   final List<Strength> _selecionadas = [];
-  Future<void> _salvarForcas() async {
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString(PrefKeys.loggedUser) ?? 'anon';
-    final nomes = _selecionadas.map((s) => s.nome).toList();
 
-    await prefs.setStringList(PrefKeys.viaTop5(email), nomes);
-    await prefs.setBool('via_test_done', false); // limpa a flag
-
-    if (!mounted) return;
-    Navigator.pop(context);
-  }
-
-
+  /// Alterna a seleção de uma força (adiciona ou remove)
   void _alternarSelecao(Strength forca) {
     setState(() {
-      final jaSelecionada =
-      _selecionadas.any((f) => f.nome == forca.nome);
+      final jaSelecionada = _selecionadas.any((f) => f.nome == forca.nome);
 
       if (jaSelecionada) {
         _selecionadas.removeWhere((f) => f.nome == forca.nome);
@@ -44,67 +34,100 @@ class _ViaTestPageState extends State<ViaTestPage> {
     });
   }
 
+  /// Salva as forças selecionadas localmente por usuário logado
+  Future<void> _salvarForcas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString(PrefKeys.loggedUser) ?? 'anon';
+    final nomes = _selecionadas.map((s) => s.nome).toList();
+
+    await prefs.setStringList(PrefKeys.viaTop5(email), nomes);
+    await prefs.setBool('via_test_done', false); // limpa flag para reprocessar
+
+    if (!mounted) return;
+    Navigator.pop(context); // volta para a tela anterior
+  }
+
+  /// Abre o site oficial do Teste VIA em navegador externo
+  Future<void> _abrirSiteVia() async {
+    final url = Uri.parse('https://www.viacharacter.org/survey/account/register');
+
+    final canOpen = await canLaunchUrl(url);
+    if (!canOpen) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível verificar o navegador.')),
+      );
+      return;
+    }
+
+    final success = await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível abrir o site no navegador.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Escolha suas 5 forças'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Text(
-              'Toque para selecionar suas 5 principais forças. '
-                  'Essas informações ficarão salvas no seu perfil.',
-              style: Theme.of(context).textTheme.bodyLarge,
+              'Você pode visitar o site oficial ou selecionar manualmente suas 5 principais forças pessoais abaixo:',
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
             ),
           ),
+
+          // Botão para abrir o site do VIA
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: ElevatedButton.icon(
+              onPressed: _abrirSiteVia,
+              icon: const Icon(Icons.open_in_browser),
+              label: const Text('Fazer Teste Oficial no Site'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+
+          // Grid com as 24 forças para seleção manual
           Expanded(
             child: GridView.count(
-              padding: const EdgeInsets.all(16),
               crossAxisCount: 2,
-              childAspectRatio: 3.2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              childAspectRatio: 3,
+              padding: const EdgeInsets.all(12),
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
               children: allStrengths.map((forca) {
-                final selecionada = _selecionadas
-                    .any((f) => f.nome == forca.nome);
+                final selecionado = _selecionadas.contains(forca);
+
                 return GestureDetector(
                   onTap: () => _alternarSelecao(forca),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                  child: Container(
                     decoration: BoxDecoration(
-                      color: selecionada
-                          ? Colors.purple.withOpacity(.85)
-                          : isDark
-                          ? Colors.grey[900]
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: selecionada
-                            ? Colors.purple
-                            : Colors.grey.withOpacity(.4),
-                        width: 2,
-                      ),
+                      color: selecionado ? Colors.blue : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    child: Center(
-                      child: Text(
-                        forca.nome,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: selecionada
-                              ? Colors.white
-                              : isDark
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
+                    alignment: Alignment.center,
+                    child: Text(
+                      forca.nome,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: selecionado ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -112,17 +135,15 @@ class _ViaTestPageState extends State<ViaTestPage> {
               }).toList(),
             ),
           ),
+
+          // Botão para salvar as escolhas
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton.icon(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: ElevatedButton(
               onPressed: _selecionadas.length == 5 ? _salvarForcas : null,
-              icon: const Icon(Icons.check),
-              label: const Text('Salvar minhas forças'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-              ),
+              child: const Text('Salvar escolhas'),
             ),
-          )
+          ),
         ],
       ),
     );

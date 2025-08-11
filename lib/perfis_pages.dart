@@ -1,4 +1,3 @@
-// lib/perfis_pages.dart
 library perfis_pages;
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'via_test_page.dart';
+import 'video_widget.dart';
 
 part 'perfis_base.dart';
 
@@ -47,38 +47,16 @@ Laços emocionais fortes na primeira infância estão ligados a maior QI, menos 
 ''',
           ),
         ),
+
         _MenuItem(
-          'Disciplina Positiva',
-          Icons.rule_folder,
-          ConteudoDetalhadoPage(
-            titulo: 'Disciplina Positiva',
-            cor: Colors.purple,
-            conteudo: '''
-LIMITE COM ACOLHIMENTO
-
-Muitas vezes confundimos disciplina com punição. Mas crianças aprendem melhor com orientação respeitosa do que com medo. A disciplina positiva ensina autocontrole, empatia e responsabilidade.
-
-O QUE É DISCIPLINA POSITIVA?  
-É o conjunto de estratégias que ensina sem humilhar, corrige sem machucar e orienta sem autoritarismo. Não se trata de “deixar fazer tudo”, mas de estabelecer regras claras com empatia.
-
-FUNDAMENTOS  
-• Toda birra é uma forma de comunicação.  
-• Gritar ou punir quebra a conexão e ativa resposta de estresse.  
-• O objetivo é educar, não “ganhar a briga”.
-
-FERRAMENTAS  
-1. Acordos visuais com imagens (bom para pré-escolares).  
-2. Diálogos pós-conflito com escuta e reconstrução.  
-3. Perguntas de reflexão: “O que você poderia fazer diferente da próxima vez?”
-
-EXEMPLO DE SITUAÇÃO  
-Seu filho jogou algo no chão com raiva? Em vez de gritar, abaixe, olhe nos olhos e diga: “Entendo que ficou bravo, mas não jogamos as coisas. Como podemos resolver isso juntos?”
-
-DADOS  
-Crianças educadas com disciplina positiva desenvolvem mais autorregulação, têm menos comportamentos agressivos e mais cooperação escolar.
-''',
+          'Vídeo: Introdução para Pais',            // String título
+          Icons.video_library,                      // IconData (segundo argumento)
+          const VideoPage(                          // Widget página (terceiro argumento)
+            title: 'Introdução para Pais',
+            url: 'https://www.youtube.com/watch?v=hZP2zfJ5ho4',
           ),
         ),
+
         _MenuItem(
           'Rotina Saudável em Família',
           Icons.schedule,
@@ -120,6 +98,7 @@ Quando a rotina vira um ritual de conexão, o que antes era caótico vira moment
 ''',
           ),
         ),
+
         _MenuItem(
           '0 a 3 anos – Primeira Infância Completa',
           Icons.baby_changing_station,
@@ -257,6 +236,7 @@ REFERÊNCIAS:
 ''',
           ),
         ),
+
         _MenuItem(
           '4 a 7 anos – Expansão Cognitiva e Emocional',
           Icons.child_care,
@@ -447,6 +427,7 @@ REFERÊNCIAS:
 ''',
           ),
         ),
+
         _MenuItem(
           '8 a 12 anos – Identidade e Transição',
           Icons.family_restroom,
@@ -663,15 +644,10 @@ Maior autoestima, menor envolvimento em condutas de risco, desenvolvimento de se
 
                   if (list == null || list.isEmpty) {
                     if (!testDone) {
-                      // marca que o teste foi iniciado
                       await prefs.setBool('via_test_done', true);
 
                       final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                        webViewConfiguration: const WebViewConfiguration(enableJavaScript: true),
-                      )) {
+                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Não foi possível abrir o link.')),
                         );
@@ -679,13 +655,11 @@ Maior autoestima, menor envolvimento em condutas de risco, desenvolvimento de se
                       }
                     }
 
-                    // após abrir ou já ter aberto, vai para seleção
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
                     );
                   } else {
-                    // já tem forças salvas: pode revisar
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
@@ -702,7 +676,6 @@ Maior autoestima, menor envolvimento em condutas de risco, desenvolvimento de se
             },
           ),
         ),
-
       ],
     );
   }
@@ -785,6 +758,15 @@ REFERÊNCIAS
 • Piaget, J. (1955). The Construction of Reality in the Child.  
 • Novak, J. (1998). Learning, Creating, and Using Knowledge.
 ''',
+          ),
+        ),
+
+        _MenuItem(
+          'Vídeo: Técnicas de Estudo',
+          Icons.video_library,
+          const VideoPage(
+            title: 'Técnicas de Estudo',
+            url: 'https://www.youtube.com/watch?v=bNKpKJdMYhk',
           ),
         ),
 
@@ -1314,47 +1296,31 @@ Estudantes que seguem ciclos de foco performam 23% melhor em provas de longo pra
           Icons.quiz,
           Builder(
             builder: (context) {
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () async {
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   final list = prefs.getStringList('via_top5');
                   final testDone = prefs.getBool('via_test_done') ?? false;
 
                   if (list == null || list.isEmpty) {
                     if (!testDone) {
-                      // marca que o teste foi iniciado
                       await prefs.setBool('via_test_done', true);
 
                       final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                        webViewConfiguration: const WebViewConfiguration(enableJavaScript: true),
-                      )) {
+                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Não foi possível abrir o link.')),
                         );
                         return;
                       }
                     }
-
-                    // após abrir ou já ter aberto, vai para seleção
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  } else {
-                    // já tem forças salvas: pode revisar
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
                   }
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ViaTestPage()),
+                  );
                 },
                 child: const ListTile(
                   title: Text('Descubra suas forças: Teste VIA'),
@@ -1366,6 +1332,8 @@ Estudantes que seguem ciclos de foco performam 23% melhor em provas de longo pra
             },
           ),
         ),
+
+
 
       ],
     );
@@ -1630,6 +1598,15 @@ Quando o estudante percebe que seu erro não define quem ele é — mas é uma c
         ),
 
         _MenuItem(
+          'Vídeo: Mediação de Conflitos',
+          Icons.video_library,
+          const VideoPage(
+            title: 'Mediação de Conflitos',
+            url: 'https://www.youtube.com/watch?v=HHG4P7FHwrM',
+          ),
+        ),
+
+        _MenuItem(
           'Formação Continuada',
           Icons.auto_stories,
           ConteudoDetalhadoPage(
@@ -1818,7 +1795,6 @@ Todo aluno merece esse lugar. E todo educador pode criá-lo — um pequeno gesto
 ''',
           ),
         ),
-
 
         _MenuItem(
           'Planejamento baseado em forças',
@@ -2038,15 +2014,10 @@ A gamificação é o cenário ideal para essa festa do saber.
 
                   if (list == null || list.isEmpty) {
                     if (!testDone) {
-                      // marca que o teste foi iniciado
                       await prefs.setBool('via_test_done', true);
 
                       final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                        webViewConfiguration: const WebViewConfiguration(enableJavaScript: true),
-                      )) {
+                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Não foi possível abrir o link.')),
                         );
@@ -2054,13 +2025,11 @@ A gamificação é o cenário ideal para essa festa do saber.
                       }
                     }
 
-                    // após abrir ou já ter aberto, vai para seleção
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
                     );
                   } else {
-                    // já tem forças salvas: pode revisar
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
@@ -2077,10 +2046,6 @@ A gamificação é o cenário ideal para essa festa do saber.
             },
           ),
         ),
-
-
-
-
       ],
     );
   }
@@ -2251,6 +2216,16 @@ Aprender por conta própria é mais do que adquirir conhecimento: é construir l
 É tornar-se dono do seu próprio percurso — e descobrir que o mundo está cheio de perguntas esperando por um cérebro curioso para respondê-las.'''
     ),
   ),
+
+        _MenuItem(
+          'Vídeo: Curiosidades & Ciência',
+          Icons.video_library,
+          const VideoPage(
+            title: 'Curiosidades & Ciência',
+            url: 'https://www.youtube.com/watch?v=hsDOoUKzank',
+          ),
+        ),
+
         _MenuItem(
           'Exploração Sensorial',
           Icons.spa,
@@ -2649,15 +2624,10 @@ Mais clareza de escolhas, menor procrastinação, maior otimismo (Fredrickson, 2
 
                   if (list == null || list.isEmpty) {
                     if (!testDone) {
-                      // marca que o teste foi iniciado
                       await prefs.setBool('via_test_done', true);
 
                       final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                        webViewConfiguration: const WebViewConfiguration(enableJavaScript: true),
-                      )) {
+                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Não foi possível abrir o link.')),
                         );
@@ -2665,13 +2635,11 @@ Mais clareza de escolhas, menor procrastinação, maior otimismo (Fredrickson, 2
                       }
                     }
 
-                    // após abrir ou já ter aberto, vai para seleção
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
                     );
                   } else {
-                    // já tem forças salvas: pode revisar
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
@@ -2688,6 +2656,7 @@ Mais clareza de escolhas, menor procrastinação, maior otimismo (Fredrickson, 2
             },
           ),
         ),
+
       ],
     );
   }
@@ -2827,15 +2796,10 @@ IMPACTO
 
                   if (list == null || list.isEmpty) {
                     if (!testDone) {
-                      // marca que o teste foi iniciado
                       await prefs.setBool('via_test_done', true);
 
                       final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                        webViewConfiguration: const WebViewConfiguration(enableJavaScript: true),
-                      )) {
+                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Não foi possível abrir o link.')),
                         );
@@ -2843,13 +2807,11 @@ IMPACTO
                       }
                     }
 
-                    // após abrir ou já ter aberto, vai para seleção
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
                     );
                   } else {
-                    // já tem forças salvas: pode revisar
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ViaTestPage()),
@@ -2866,7 +2828,6 @@ IMPACTO
             },
           ),
         ),
-
 
         _MenuItem(
           'Quiz Instituições',

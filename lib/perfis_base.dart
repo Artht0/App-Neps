@@ -9,12 +9,14 @@ class ConteudoDetalhadoPage extends StatelessWidget {
   final String titulo;
   final String conteudo;
   final Color cor;
+  final String? videoUrl;
 
   const ConteudoDetalhadoPage({
     Key? key,
     required this.titulo,
     required this.conteudo,
     required this.cor,
+    this.videoUrl,
   }) : super(key: key);
 
   @override
@@ -24,17 +26,28 @@ class ConteudoDetalhadoPage extends StatelessWidget {
       backgroundColor: cor,
       centerTitle: true,
     ),
-    body: SingleChildScrollView(
+    body: ListView(
       padding: const EdgeInsets.all(16),
-      child: Text(
-        conteudo,
-        style: const TextStyle(fontSize: 16, height: 1.5),
-      ),
+      children: [
+        Text(
+          conteudo,
+          style: const TextStyle(fontSize: 16, height: 1.5),
+        ),
+        if (videoUrl != null) ...[
+          const SizedBox(height: 24),
+          const Text(
+            'Assista ao vídeo:',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          const SizedBox(height: 12),
+          VideoWidget(videoUrl: videoUrl!),
+        ],
+      ],
     ),
   );
 }
 
-/// Página “base” que os cinco perfis herdam, evitando repetição de UI
+/// Página "base" que os cinco perfis herdam, evitando repetição de UI
 class PerfilBasePage extends StatelessWidget {
   final String titulo;
   final List<_MenuItem> menuItems;
