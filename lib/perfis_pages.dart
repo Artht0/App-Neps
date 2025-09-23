@@ -629,52 +629,7 @@ Maior autoestima, menor envolvimento em condutas de risco, desenvolvimento de se
         _MenuItem(
           'Descubra suas forças: Teste VIA',
           Icons.quiz,
-          Builder(
-            builder: (context) {
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final list = prefs.getStringList('via_top5');
-                  final testDone = prefs.getBool('via_test_done') ?? false;
-
-                  if (list == null || list.isEmpty) {
-                    if (!testDone) {
-                      await prefs.setBool('via_test_done', true);
-
-                      final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Não foi possível abrir o link.')),
-                        );
-                        return;
-                      }
-                    }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  }
-                },
-                child: const ListTile(
-                  title: Text('Descubra suas forças: Teste VIA'),
-                  subtitle: Text('Clique para fazer ou revisar suas 5 forças principais'),
-                  leading: Icon(Icons.quiz),
-                  trailing: Icon(Icons.chevron_right),
-                ),
-              );
-            },
-          ),
+          const _ViaEntryRedirect(), // ← redireciona sem “tela intermediária”
         ),
       ],
     );
@@ -1294,44 +1249,9 @@ Estudantes que seguem ciclos de foco performam 23% melhor em provas de longo pra
         _MenuItem(
           'Descubra suas forças: Teste VIA',
           Icons.quiz,
-          Builder(
-            builder: (context) {
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final list = prefs.getStringList('via_top5');
-                  final testDone = prefs.getBool('via_test_done') ?? false;
-
-                  if (list == null || list.isEmpty) {
-                    if (!testDone) {
-                      await prefs.setBool('via_test_done', true);
-
-                      final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Não foi possível abrir o link.')),
-                        );
-                        return;
-                      }
-                    }
-                  }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                  );
-                },
-                child: const ListTile(
-                  title: Text('Descubra suas forças: Teste VIA'),
-                  subtitle: Text('Clique para fazer ou revisar suas 5 forças principais'),
-                  leading: Icon(Icons.quiz),
-                  trailing: Icon(Icons.chevron_right),
-                ),
-              );
-            },
-          ),
+          const _ViaEntryRedirect(), // ← redireciona sem “tela intermediária”
         ),
+
 
 
 
@@ -1999,53 +1919,9 @@ A gamificação é o cenário ideal para essa festa do saber.
         _MenuItem(
           'Descubra suas forças: Teste VIA',
           Icons.quiz,
-          Builder(
-            builder: (context) {
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final list = prefs.getStringList('via_top5');
-                  final testDone = prefs.getBool('via_test_done') ?? false;
-
-                  if (list == null || list.isEmpty) {
-                    if (!testDone) {
-                      await prefs.setBool('via_test_done', true);
-
-                      final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Não foi possível abrir o link.')),
-                        );
-                        return;
-                      }
-                    }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  }
-                },
-                child: const ListTile(
-                  title: Text('Descubra suas forças: Teste VIA'),
-                  subtitle: Text('Clique para fazer ou revisar suas 5 forças principais'),
-                  leading: Icon(Icons.quiz),
-                  trailing: Icon(Icons.chevron_right),
-                ),
-              );
-            },
-          ),
+          const _ViaEntryRedirect(), // ← redireciona sem “tela intermediária”
         ),
+
       ],
     );
   }
@@ -2609,52 +2485,7 @@ Mais clareza de escolhas, menor procrastinação, maior otimismo (Fredrickson, 2
         _MenuItem(
           'Descubra suas forças: Teste VIA',
           Icons.quiz,
-          Builder(
-            builder: (context) {
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final list = prefs.getStringList('via_top5');
-                  final testDone = prefs.getBool('via_test_done') ?? false;
-
-                  if (list == null || list.isEmpty) {
-                    if (!testDone) {
-                      await prefs.setBool('via_test_done', true);
-
-                      final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Não foi possível abrir o link.')),
-                        );
-                        return;
-                      }
-                    }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  }
-                },
-                child: const ListTile(
-                  title: Text('Descubra suas forças: Teste VIA'),
-                  subtitle: Text('Clique para fazer ou revisar suas 5 forças principais'),
-                  leading: Icon(Icons.quiz),
-                  trailing: Icon(Icons.chevron_right),
-                ),
-              );
-            },
-          ),
+          const _ViaEntryRedirect(), // ← redireciona sem “tela intermediária”
         ),
 
       ],
@@ -2781,53 +2612,9 @@ IMPACTO
         _MenuItem(
           'Descubra suas forças: Teste VIA',
           Icons.quiz,
-          Builder(
-            builder: (context) {
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final list = prefs.getStringList('via_top5');
-                  final testDone = prefs.getBool('via_test_done') ?? false;
-
-                  if (list == null || list.isEmpty) {
-                    if (!testDone) {
-                      await prefs.setBool('via_test_done', true);
-
-                      final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
-                      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Não foi possível abrir o link.')),
-                        );
-                        return;
-                      }
-                    }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ViaTestPage()),
-                    );
-                  }
-                },
-                child: const ListTile(
-                  title: Text('Descubra suas forças: Teste VIA'),
-                  subtitle: Text('Clique para fazer ou revisar suas 5 forças principais'),
-                  leading: Icon(Icons.quiz),
-                  trailing: Icon(Icons.chevron_right),
-                ),
-              );
-            },
-          ),
+          const _ViaEntryRedirect(), // ← redireciona sem “tela intermediária”
         ),
+
 
         _MenuItem(
           'Quiz Instituições',
@@ -2841,4 +2628,47 @@ IMPACTO
       ],
     );
   }
+}
+
+class _ViaEntryRedirect extends StatefulWidget {
+  const _ViaEntryRedirect({super.key});
+
+  @override
+  State<_ViaEntryRedirect> createState() => _ViaEntryRedirectState();
+}
+
+class _ViaEntryRedirectState extends State<_ViaEntryRedirect> {
+  @override
+  void initState() {
+    super.initState();
+    _processarEntrada();
+  }
+
+  Future<void> _processarEntrada() async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = prefs.getStringList('via_top5');
+    final testDone = prefs.getBool('via_test_done') ?? false;
+
+    if (list == null || list.isEmpty) {
+      if (!testDone) {
+        await prefs.setBool('via_test_done', true);
+        final uri = Uri.parse('https://www.viacharacter.org/survey/account/register');
+        final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+        if (!ok && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Não foi possível abrir o link.')),
+          );
+        }
+      }
+    }
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const ViaTestPage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

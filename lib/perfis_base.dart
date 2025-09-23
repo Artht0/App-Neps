@@ -1,7 +1,3 @@
-// lib/perfis_base.dart
-// -----------------------------------------------------------------------------
-// Componentes compartilhados entre os perfis
-// -----------------------------------------------------------------------------
 part of 'perfis_pages.dart';
 
 /// Página para exibir textos longos (reaproveitada por todos os perfis)
@@ -40,7 +36,6 @@ class ConteudoDetalhadoPage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(height: 12),
-          VideoWidget(videoUrl: videoUrl!),
         ],
       ],
     ),

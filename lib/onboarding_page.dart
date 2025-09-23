@@ -1,6 +1,6 @@
-// lib/onboarding_page.dart
-// Carrossel de introdução ao app – SEM gravar "visto"
-part of app_main;
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'constants.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -10,78 +10,110 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final _controller = PageController();
-  int _current = 0;
+  late final PageController _controller;
+  int _index = 0;
 
-  final List<_OnboardingItem> _items = const [
-    _OnboardingItem('Bem-vindo',  'Descubra o poder da Psicologia Positiva.', Icons.emoji_people),
-    _OnboardingItem('Curiosos',   'Explore temas fascinantes sobre o mundo.', Icons.lightbulb),
-    _OnboardingItem('Estudantes', 'Melhore sua concentração e aprendizado.', Icons.school),
-    _OnboardingItem('Pais',       'Dicas práticas para desenvolvimento infantil.', Icons.family_restroom),
-    _OnboardingItem('Educadores','Ferramentas para engajar seus alunos.', Icons.auto_stories),
-    _OnboardingItem('Instituições','Crie ambientes organizacionais saudáveis.', Icons.business),
+  static final _pages = <_OnboardData>[
+    const _OnboardData(
+      icon: Icons.psychology_alt_rounded,
+      title: 'Descubra suas Forças',
+      description:
+      'Você possui qualidades únicas. Com o teste VIA, você identifica suas 5 forças de caráter mais desenvolvidas.',
+    ),
+    const _OnboardData(
+      icon: Icons.school_rounded,
+      title: 'Aprenda com Propósito',
+      description:
+      'Com base no seu perfil, oferecemos conteúdos personalizados que ajudam você a aprender melhor.',
+    ),
+    const _OnboardData(
+      icon: Icons.lightbulb_rounded,
+      title: 'Desperte seu Potencial',
+      description:
+      'Aqui você desenvolve habilidades socioemocionais, autoconhecimento e aprende no seu ritmo.',
+    ),
   ];
 
-  Future<void> _finish() async {
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _finalizar() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(PrefKeys.onboardingDone, true);
     if (!mounted) return;
-    Navigator.of(context).pushReplacementNamed('/login');
+    Navigator.pushReplacementNamed(context, AppRoutes.auth);
+  }
+
+  void _avancarOuFinalizar() {
+    if (_index == _pages.length - 1) {
+      _finalizar();
+    } else {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _finalizar,
+                child: const Text('Pular'),
+              ),
+            ),
             Expanded(
               child: PageView.builder(
                 controller: _controller,
-                onPageChanged: (i) => setState(() => _current = i),
-                itemCount: _items.length,
-                itemBuilder: (_, i) {
-                  final item = _items[i];
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(item.icon, size: 120, color: Colors.deepPurple),
-                      const SizedBox(height: 32),
-                      Text(item.title, style: Theme.of(context).textTheme.headlineMedium),
-                      const SizedBox(height: 12),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Text(
-                          item.text,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                onPageChanged: (i) => setState(() => _index = i),
+                itemCount: _pages.length,
+                itemBuilder: (_, i) => _OnboardCard(page: _pages[i]),
               ),
             ),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _items.length,
-                    (i) => Container(
-                  margin: const EdgeInsets.all(6),
-                  width: 10,
-                  height: 10,
+              children: List.generate(_pages.length, (i) {
+                final selected = i == _index;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: selected ? 20 : 8,
+                  height: 8,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: i == _current
-                        ? Colors.deepPurple
-                        : Colors.deepPurple.withOpacity(.3),
+                    color: selected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.primary.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
+            const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.all(24),
-              child: ElevatedButton(
-                onPressed: _finish,
-                child: const Text('Começar'),
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _avancarOuFinalizar,
+                  child: Text(_index == _pages.length - 1 ? 'Começar agora' : 'Avançar'),
+                ),
               ),
             ),
           ],
@@ -91,9 +123,49 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 }
 
-class _OnboardingItem {
-  final String title;
-  final String text;
+class _OnboardData {
   final IconData icon;
-  const _OnboardingItem(this.title, this.text, this.icon);
+  final String title;
+  final String description;
+
+  const _OnboardData({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+}
+
+class _OnboardCard extends StatelessWidget {
+  final _OnboardData page;
+
+  const _OnboardCard({required this.page});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(page.icon, size: 96, color: theme.colorScheme.primary),
+          const SizedBox(height: 24),
+          Text(
+            page.title,
+            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              page.description,
+              style: theme.textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

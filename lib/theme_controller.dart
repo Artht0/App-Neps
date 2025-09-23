@@ -1,18 +1,43 @@
-// lib/theme_controller.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'constants.dart';
 
 class ThemeController {
-  ThemeController._();
-  static final instance = ThemeController._();
+  ThemeController._(this._prefs);
 
-  final isDark = ValueNotifier<bool>(false);
+  final SharedPreferences _prefs;
 
-  Future<void> init(bool initial) async => isDark.value = initial;
-
-  Future<void> toggle() async {
-    isDark.value = !isDark.value;
+  static Future<ThemeController> instance() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('is_dark', isDark.value);
+    return ThemeController._(prefs);
+  }
+
+  String get currentModeString =>
+      _prefs.getString(PrefKeys.themeMode) ?? 'system';
+
+  ThemeMode get currentMode {
+    switch (currentModeString) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  Future<void> setModeString(String mode) async {
+    await _prefs.setString(PrefKeys.themeMode, mode);
+  }
+
+  static ThemeMode parseMode(String? mode) {
+    switch (mode) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
   }
 }

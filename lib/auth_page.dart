@@ -1,98 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'constants.dart';
 
-class TelaLoginCadastro extends StatefulWidget {
-  const TelaLoginCadastro({super.key});
+import 'constants.dart';
+import 'user_prefs.dart';
+
+class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
 
   @override
-  State<TelaLoginCadastro> createState() => _TelaLoginCadastroState();
+  State<AuthPage> createState() => _AuthPageState();
 }
 
-class _TelaLoginCadastroState extends State<TelaLoginCadastro> {
-  final _formKey = GlobalKey<FormState>();
+class _AuthPageState extends State<AuthPage> {
   final _emailCtrl = TextEditingController();
   final _senhaCtrl = TextEditingController();
-  bool _isLogin = true;
+  bool _obscure = true;
+  bool _loading = false;
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(PrefKeys.loggedUser, _emailCtrl.text);
-    await prefs.setString(_emailCtrl.text, _senhaCtrl.text);
-    if (!mounted) return;
-    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _senhaCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    final email = _emailCtrl.text.trim().toLowerCase();
+    final senha = _senhaCtrl.text;
+    if (email.isEmpty || senha.isEmpty) {
+      _showSnack('Informe email e senha.');
+      return;
+    }
+
+    setState(() => _loading = true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Persistência local por usuário (protótipo)
+      await UserPrefs.setStringForUser(email, 'password', senha);
+
+      // Define usuário logado globalmente
+      await prefs.setString(PrefKeys.loggedUser, email);
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, AppRoutes.home); // <- vai para HOME
+    } catch (_) {
+      _showSnack('Falha ao entrar. Tente novamente.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.psychology, size: 80, color: theme.colorScheme.primary),
-              const SizedBox(height: 16),
-              Text(
-                _isLogin ? 'Bem-vindo de volta' : 'Crie sua conta',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 32),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _emailCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'E-mail',
-                        prefixIcon: Icon(Icons.email),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) =>
-                      (v == null || !v.contains('@')) ? 'E-mail inválido' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _senhaCtrl,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Senha',
-                        prefixIcon: Icon(Icons.lock),
-                      ),
-                      validator: (v) => (v == null || v.length < 4)
-                          ? 'Mínimo 4 caracteres'
-                          : null,
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        icon: Icon(_isLogin ? Icons.login : Icons.person_add),
-                        label: Text(_isLogin ? 'Entrar' : 'Cadastrar'),
-                        onPressed: _submit,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => setState(() => _isLogin = !_isLogin),
-                      child: Text(_isLogin
-                          ? 'Ainda não tem conta? Cadastre-se'
-                          : 'Já possui conta? Entrar'),
-                    ),
-                  ],
+      appBar: AppBar(title: const Text('Entrar')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _senhaCtrl,
+              decoration: InputDecoration(
+                labelText: 'Senha',
+                suffixIcon: IconButton(
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                  icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                 ),
               ),
-            ],
-          ),
+              obscureText: _obscure,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _login,
+                child: _loading
+                    ? const SizedBox(
+                    height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text('Entrar'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () {
+                // Ajuste conforme sua rota oficial de recuperação
+                Navigator.pushNamed(context, AppRoutes.auth);
+              },
+              child: const Text('Esqueci minha senha'),
+            ),
+          ],
         ),
       ),
     );

@@ -173,10 +173,6 @@ class _VideoPageState extends State<VideoPage> {
   }
 }
 
-/// ===============================================================
-///  WIDGETS DE LISTA/ITENS (opcional) — se você usa cards para vídeos
-/// ===============================================================
-
 class VideoListItem extends StatelessWidget {
   final String title;
   final String url;
