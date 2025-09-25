@@ -1,8 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'constants.dart';
+import 'onboarding_page.dart';
+import 'auth_page.dart';
+import 'perfil_usuario_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -11,116 +12,122 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
-  late final AnimationController _anim;
-  Timer? _timer;
+class _SplashPageState extends State<SplashPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    _anim = AnimationController(
+
+    _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..forward();
+    );
 
-    _timer = Timer(const Duration(milliseconds: 1800), _decideRoute);
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.elasticOut,
+    );
+
+    _controller.forward();
+
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      _checkNextRoute();
+    });
+  }
+
+  Future<void> _checkNextRoute() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final onboardingDone = prefs.getBool(PrefKeys.onboardingDone) ?? false;
+    final loggedUser = prefs.getString(PrefKeys.loggedUser) ?? '';
+
+    Widget nextPage;
+    if (!onboardingDone) {
+      nextPage = const OnboardingPage();
+    } else if (loggedUser.isEmpty) {
+      nextPage = const AuthPage();
+    } else {
+      nextPage = const PerfilUsuarioPage(); // ou HomePage se preferir
+    }
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => nextPage),
+      );
+    }
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
-    _anim.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  Future<void> _decideRoute() async {
-    final prefs = await SharedPreferences.getInstance();
-    final onboardingDone = prefs.getBool(PrefKeys.onboardingDone) ?? false;
-    final loggedUser = prefs.getString(PrefKeys.loggedUser);
-
-    debugPrint('[Splash] onboardingDone: $onboardingDone');
-    debugPrint('[Splash] loggedUser: $loggedUser');
-
-    String route;
-
-    if (!onboardingDone) {
-      route = AppRoutes.onboarding;
-    } else if (loggedUser == null || loggedUser.isEmpty) {
-      route = AppRoutes.auth;
-    } else {
-      route = AppRoutes.home;
-    }
-
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, route);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorPrimary = theme.colorScheme.primary;
-    final colorSecondary = theme.colorScheme.secondary;
-
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: FadeTransition(
-          opacity: CurvedAnimation(parent: _anim, curve: Curves.easeIn),
+          opacity: _fadeAnimation,
           child: ScaleTransition(
-            scale: Tween<double>(begin: 0.92, end: 1.0).animate(
-              CurvedAnimation(parent: _anim, curve: Curves.easeOutBack),
-            ),
+            scale: _scaleAnimation,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // 🔆 Logo circular com borda dourada
                 Container(
-                  width: 120,
-                  height: 120,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.secondary, width: 3),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorPrimary.withOpacity(0.15),
-                        colorPrimary.withOpacity(0.35)
-                      ],
+                    border: Border.all(
+                      color: AppColors.secondary,
+                      width: 4,
                     ),
                   ),
-                  child: const Icon(Icons.explore_rounded, size: 64),
+                  child: const Icon(
+                    Icons.star,
+                    size: 50,
+                    color: Colors.amber,
+                  ),
                 ),
                 const SizedBox(height: 24),
-                AnimatedBuilder(
-                  animation: _anim,
-                  builder: (context, _) {
-                    final t = _anim.value;
-                    return ShaderMask(
-                      shaderCallback: (rect) {
-                        return LinearGradient(
-                          begin: Alignment(-1 + t * 2, 0),
-                          end: Alignment(1 + t * 2, 0),
-                          colors: [
-                            colorSecondary.withOpacity(0.2),
-                            colorSecondary,
-                            colorSecondary.withOpacity(0.2),
-                          ],
-                          stops: const [0.2, 0.5, 0.8],
-                        ).createShader(rect);
-                      },
-                      child: Text(
-                        'NEPS',
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  },
+                // 🔆 Título com shimmer fake
+                ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [
+                      Colors.yellow.shade600,
+                      Colors.orange.shade400,
+                      Colors.yellow.shade600,
+                    ],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'NEPS',
+                    style: TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 2,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Seu app de forças e perfis',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
                   ),
                 ),
               ],

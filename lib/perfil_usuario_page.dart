@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'via_storage.dart';
-import 'constants.dart';
 
 
 class PerfilUsuarioPage extends StatefulWidget {
@@ -120,6 +119,12 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Perfil do Usuário'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            },
+          ),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Perfil'),

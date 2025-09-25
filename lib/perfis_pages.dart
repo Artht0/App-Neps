@@ -16,7 +16,7 @@ class PaisFaixaEtariaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PerfilBasePage(
       titulo: 'Pais',
-      cor: Colors.purple,
+      cor: Colors.orange,
       menuItems: [
 
         _MenuItem(
@@ -24,7 +24,7 @@ class PaisFaixaEtariaPage extends StatelessWidget {
           Icons.face,
           ConteudoDetalhadoPage(
             titulo: 'Conexão Pai-Mãe-Bebê',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 O VÍNCULO É A PRIMEIRA ESCOLA
 
@@ -51,7 +51,7 @@ Laços emocionais fortes na primeira infância estão ligados a maior QI, menos 
         _MenuItem(
           'Vídeo: Introdução para Pais',            // String título
           Icons.video_library,                      // IconData (segundo argumento)
-          const VideoPage(                          // Widget página (terceiro argumento)
+          const UniversalVideoPage(                          // Widget página (terceiro argumento)
             title: 'Introdução para Pais',
             url: 'https://www.youtube.com/watch?v=hZP2zfJ5ho4',
           ),
@@ -62,7 +62,7 @@ Laços emocionais fortes na primeira infância estão ligados a maior QI, menos 
           Icons.schedule,
           ConteudoDetalhadoPage(
             titulo: 'Rotina Saudável em Família',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 ROTINAS DÃO SEGURANÇA
 
@@ -104,7 +104,7 @@ Quando a rotina vira um ritual de conexão, o que antes era caótico vira moment
           Icons.baby_changing_station,
           ConteudoDetalhadoPage(
             titulo: '0 a 3 anos – Primeira Infância Completa',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 DESENVOLVIMENTO EMOCIONAL, SENSORIAL E SOCIAL – 0 A 3 ANOS
 
@@ -242,7 +242,7 @@ REFERÊNCIAS:
           Icons.child_care,
           ConteudoDetalhadoPage(
             titulo: '4 a 7 anos – Expansão Cognitiva e Emocional',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 4 A 7 ANOS – FASE DE CONSTRUÇÃO SOCIAL, LINGUAGEM E AUTONOMIA
 
@@ -433,7 +433,7 @@ REFERÊNCIAS:
           Icons.family_restroom,
           ConteudoDetalhadoPage(
             titulo: '8 a 12 anos – Identidade e Transição',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 8 A 12 ANOS – AUTONOMIA, IDENTIDADE E TRANSIÇÃO
 
@@ -595,7 +595,7 @@ REFERÊNCIAS:
           Icons.emoji_people,
           ConteudoDetalhadoPage(
             titulo: '13 a 18 anos',
-            cor: Colors.purple,
+            cor: Colors.orange,
             conteudo: '''
 ADOLESCÊNCIA E IDENTIDADE POSITIVA
 
@@ -719,7 +719,7 @@ REFERÊNCIAS
         _MenuItem(
           'Vídeo: Técnicas de Estudo',
           Icons.video_library,
-          const VideoPage(
+          const UniversalVideoPage(
             title: 'Técnicas de Estudo',
             url: 'https://www.youtube.com/watch?v=bNKpKJdMYhk',
           ),
@@ -1265,7 +1265,7 @@ class EducadoresPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PerfilBasePage(
       titulo: 'Educadores',
-      cor: Colors.orange,
+      cor: Colors.purple,
       menuItems: [
 
         _MenuItem(
@@ -1273,7 +1273,7 @@ class EducadoresPage extends StatelessWidget {
           Icons.edit_note,
           ConteudoDetalhadoPage(
             titulo: 'Avaliação Formativa',
-            cor: Colors.orange,
+            cor: Colors.purple,
             conteudo: '''
 AVALIAÇÃO FORMATIVA — ENSINAR É TAMBÉM SABER ACOMPANHAR
 
@@ -1385,7 +1385,7 @@ Mais do que medir, é uma forma de acreditar no potencial de cada estudante.
           Icons.handshake,
           ConteudoDetalhadoPage(
             titulo: 'Mediação de Conflitos',
-            cor: Colors.orange,
+            cor: Colors.purple,
             conteudo: '''
 MEDIAÇÃO DE CONFLITOS — APRENDER A CONVIVER É APRENDER A RECONCILIAR
 
@@ -1520,7 +1520,7 @@ Quando o estudante percebe que seu erro não define quem ele é — mas é uma c
         _MenuItem(
           'Vídeo: Mediação de Conflitos',
           Icons.video_library,
-          const VideoPage(
+          const UniversalVideoPage(
             title: 'Mediação de Conflitos',
             url: 'https://www.youtube.com/watch?v=HHG4P7FHwrM',
           ),
@@ -1531,7 +1531,7 @@ Quando o estudante percebe que seu erro não define quem ele é — mas é uma c
           Icons.auto_stories,
           ConteudoDetalhadoPage(
             titulo: 'Formação Continuada',
-            cor: Colors.orange,
+            cor: Colors.purple,
             conteudo: '''
 PROFESSOR QUE APRENDE, TRANSFORMA
 
@@ -1553,7 +1553,7 @@ Mais criatividade, menos burnout e valorização do fazer docente.
           Icons.people_alt,
           ConteudoDetalhadoPage(
             titulo: 'Sala de Aula Positiva',
-            cor: Colors.orange,
+            cor: Colors.purple,
             conteudo: '''
 SALA DE AULA POSITIVA — UM AMBIENTE QUE FAZ FLORESCER
 
@@ -1721,7 +1721,7 @@ Todo aluno merece esse lugar. E todo educador pode criá-lo — um pequeno gesto
           Icons.track_changes,
           ConteudoDetalhadoPage(
             titulo: 'Planejamento baseado em forças',
-            cor: Colors.orange,
+            cor: Colors.purple,
             conteudo: '''
 AULAS QUE DESPERTAM O MELHOR DE CADA UM
 
@@ -1742,7 +1742,7 @@ Aumento de pertencimento e engajamento coletivo. Gera cultura de valorização m
           Icons.videogame_asset,
           ConteudoDetalhadoPage(
             titulo: 'Gamificação do Conhecimento',
-            cor: Colors.green,
+            cor: Colors.purple,
             conteudo: '''
 GAMIFICAÇÃO DO CONHECIMENTO — APRENDER PODE SER UM JOGO
 
@@ -2096,7 +2096,7 @@ Aprender por conta própria é mais do que adquirir conhecimento: é construir l
         _MenuItem(
           'Vídeo: Curiosidades & Ciência',
           Icons.video_library,
-          const VideoPage(
+          const UniversalVideoPage(
             title: 'Curiosidades & Ciência',
             url: 'https://www.youtube.com/watch?v=hsDOoUKzank',
           ),

@@ -1,16 +1,26 @@
-# neep
+# 📱 NEEP
 
-A new Flutter project.
+NEEP is a **Flutter/Dart** app for discovering personal strengths and exploring learning profiles.  
+It includes onboarding, VIA test with local storage, detailed profiles, and light/dark theme support.
 
-## Getting Started
+## 🚀 Features
+- Interactive onboarding
+- VIA test (top 5) with persistence using `SharedPreferences`
+- Profiles: Parents, Students, Educators, Curious, Institutions
+- Light/Dark theme
 
-This project is a starting point for a Flutter application.
+## 🛠️ Technologies
+- Flutter 3.x
+- Dart
+- SharedPreferences
+-
+## 📌 Status
 
-A few resources to get you started if this is your first Flutter project:
+Prototype in development for learning and continuous improvement.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📦 How to run
+```bash
+git clone https://github.com/yourusername/neep-app.git
+cd neep-app
+flutter pub get
+flutter run
